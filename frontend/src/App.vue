@@ -38,6 +38,7 @@
           <div class="mb-3">
             <label for="umur" class="form-label">Umur</label>
             <input type="text" class="form-control" v-model="inputUmur" />
+            <label for="umur" class="text-danger" v-if="umurError">umur tidak boleh minus</label>
           </div>
           <div class="mb-3">
             <label for="pekerjaan" class="form-label">Pekerjaan</label>
@@ -50,6 +51,7 @@
               class="form-control"
               v-model="inputPenghasilan"
             />
+            <label for="umur" class="text-danger" v-if="penghasilanError">penghasilan tidak boleh minus</label>
           </div>
           <div class="mb-3">
             <label for="penghasilan" class="form-label">Hobby</label>
@@ -120,7 +122,7 @@
 </template>
 
 <script setup>
-import { onMounted, ref } from "vue";
+import { onMounted, ref, watch } from "vue";
 import axios from "axios";
 
 const url = "http://localhost:8080/api/v1";
@@ -171,6 +173,7 @@ const getDataProduct = async (objPelanggan) => {
 };
 
 const onHandleSubmit = async () => {
+  validasiError();
   if (isUpdate.value == false) {
     await axios.post(url + "/pelanggan", {
       nama: inputNama.value,
@@ -204,6 +207,14 @@ const deleteProduct = async (id) => {
   alert("delete pelanggan successfully");
   getPelanggan();
 };
+
+//validasi
+const umurError = ref(false);
+const penghasilanError = ref(false);
+const validasiError = ()=>{
+  if(inputUmur.value < 0 ) umurError.value = true;
+  if(inputPenghasilan.value < 0 ) penghasilanError.value = true;
+}
 
 onMounted(() => {
   getPelanggan();
